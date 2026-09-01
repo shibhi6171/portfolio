@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shibhi S — Portfolio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --pcb:#0E2018;
+    --pcb-deep:#081410;
+    --mask:#12291F;
+    --copper:#C97B3D;
+    --copper-bright:#E3A15C;
+    --pad:#3E6B54;
+    --ivory:#EFE9DC;
+    --ivory-dim:#B9C2BA;
+    --line: rgba(201,123,61,0.28);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--pcb);
+    color:var(--ivory);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:0.35;
+    pointer-events:none;
+    z-index:0;
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:0 28px; position:relative; z-index:1;}
+
+  h1,h2,h3{font-family:'Space Grotesk', sans-serif; font-weight:700; letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+
+  /* trace rail */
+  .rail{
+    position:fixed; left:50%; top:0; bottom:0; width:2px;
+    background:linear-gradient(var(--copper), transparent 92%);
+    opacity:0.18; z-index:0; transform:translateX(-50%);
+    display:none;
+  }
+  @media(min-width:900px){ .rail{display:block;} }
+
+  /* nav */
+  nav{
+    position:sticky; top:0; z-index:10;
+    background:rgba(8,20,16,0.85); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .inner{
+    max-width:960px; margin:0 auto; padding:16px 28px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  nav .logo{font-family:'IBM Plex Mono'; font-size:14px; color:var(--copper-bright); letter-spacing:0.08em;}
+  nav ul{list-style:none; display:flex; gap:26px;}
+  nav a{color:var(--ivory-dim); text-decoration:none; font-size:14px; font-family:'IBM Plex Mono'; transition:color .2s;}
+  nav a:hover{color:var(--copper-bright);}
+
+  /* hero */
+  header.hero{padding:110px 0 90px; position:relative;}
+  .eyebrow{
+    font-family:'IBM Plex Mono'; font-size:13px; color:var(--copper-bright);
+    letter-spacing:0.12em; text-transform:uppercase; margin-bottom:18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow .dot{width:7px; height:7px; border-radius:50%; background:var(--copper-bright); box-shadow:0 0 8px var(--copper-bright);}
+  h1.name{font-size:clamp(40px,7vw,72px); line-height:1.02; color:var(--ivory); margin-bottom:14px;}
+  h1.name span{color:var(--copper-bright);}
+  .role{font-size:19px; color:var(--ivory-dim); max-width:560px; margin-bottom:34px;}
+  .contact-row{display:flex; flex-wrap:wrap; gap:14px;}
+  .pill{
+    font-family:'IBM Plex Mono'; font-size:13px; color:var(--ivory);
+    border:1px solid var(--pad); padding:8px 16px; border-radius:20px;
+    text-decoration:none; transition:.2s; background:rgba(62,107,84,0.08);
+  }
+  .pill:hover{border-color:var(--copper); color:var(--copper-bright);}
+
+  /* section shell */
+  section{padding:70px 0; border-top:1px solid var(--line); position:relative;}
+  .tag{
+    font-family:'IBM Plex Mono'; font-size:12px; color:var(--copper-bright);
+    letter-spacing:0.14em; text-transform:uppercase; margin-bottom:10px;
+    display:block;
+  }
+  h2.title{font-size:clamp(26px,4vw,34px); color:var(--ivory); margin-bottom:36px;}
+
+  /* about */
+  .about-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:50px;}
+  @media(max-width:760px){.about-grid{grid-template-columns:1fr;}}
+  .about-grid p{color:var(--ivory-dim); font-size:16px; margin-bottom:16px;}
+  .stat-card{
+    border:1px solid var(--pad); border-radius:10px; padding:20px;
+    background:rgba(62,107,84,0.06); margin-bottom:14px;
+  }
+  .stat-card .num{font-family:'Space Grotesk'; font-size:28px; color:var(--copper-bright); font-weight:700;}
+  .stat-card .label{font-size:13px; color:var(--ivory-dim); font-family:'IBM Plex Mono';}
+
+  /* skills - chip / IC style */
+  .chip-groups{display:flex; flex-direction:column; gap:22px;}
+  .chip-group-label{font-family:'IBM Plex Mono'; font-size:13px; color:var(--ivory-dim); margin-bottom:10px;}
+  .chips{display:flex; flex-wrap:wrap; gap:10px;}
+  .chip{
+    font-family:'IBM Plex Mono'; font-size:13px; color:var(--ivory);
+    border:1px solid var(--pad); padding:7px 14px; border-radius:5px;
+    background:var(--mask); position:relative;
+  }
+  .chip::before{content:"";position:absolute; left:-4px; top:50%; transform:translateY(-50%);
+    width:4px; height:8px; background:var(--copper); opacity:0.6;}
+  .chip::after{content:"";position:absolute; right:-4px; top:50%; transform:translateY(-50%);
+    width:4px; height:8px; background:var(--copper); opacity:0.6;}
+
+  /* timeline / experience + projects */
+  .card{
+    border:1px solid var(--pad); border-radius:10px; padding:26px 28px;
+    background:rgba(18,41,31,0.5); margin-bottom:22px; position:relative;
+  }
+  .card::before{
+    content:""; position:absolute; left:0; top:24px; bottom:24px; width:3px;
+    background:var(--copper); border-radius:2px; opacity:0.7;
+  }
+  .card-head{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:6px;}
+  .card-head h3{font-size:19px; color:var(--ivory);}
+  .card-head .meta{font-family:'IBM Plex Mono'; font-size:12.5px; color:var(--copper-bright);}
+  .card ul{margin-top:10px; padding-left:18px; color:var(--ivory-dim); font-size:14.5px;}
+  .card ul li{margin-bottom:6px;}
+  .stack-row{margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;}
+  .stack-row span{
+    font-family:'IBM Plex Mono'; font-size:11.5px; color:var(--ivory-dim);
+    border:1px solid var(--pad); padding:3px 9px; border-radius:4px;
+  }
+  .badge{
+    display:inline-block; font-family:'IBM Plex Mono'; font-size:11px;
+    color:var(--pcb-deep); background:var(--copper-bright); padding:3px 9px;
+    border-radius:4px; font-weight:600; margin-left:8px;
+  }
+
+  /* education table */
+  table{width:100%; border-collapse:collapse; font-size:14.5px;}
+  th{
+    text-align:left; font-family:'IBM Plex Mono'; font-size:12px; color:var(--copper-bright);
+    text-transform:uppercase; letter-spacing:0.06em; padding:10px 14px; border-bottom:1px solid var(--pad);
+  }
+  td{padding:14px 14px; border-bottom:1px solid rgba(62,107,84,0.25); color:var(--ivory-dim);}
+
+  /* contact / footer */
+  footer{padding:80px 0 60px; text-align:center;}
+  footer h2{font-size:clamp(28px,5vw,40px); margin-bottom:16px;}
+  footer p{color:var(--ivory-dim); margin-bottom:30px;}
+  .footer-links{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+  .btn{
+    font-family:'IBM Plex Mono'; font-size:14px; padding:12px 26px; border-radius:6px;
+    text-decoration:none; transition:.2s;
+  }
+  .btn.primary{background:var(--copper); color:var(--pcb-deep); font-weight:600;}
+  .btn.primary:hover{background:var(--copper-bright);}
+  .btn.ghost{border:1px solid var(--pad); color:var(--ivory);}
+  .btn.ghost:hover{border-color:var(--copper);}
+  .fine{margin-top:50px; font-family:'IBM Plex Mono'; font-size:11.5px; color:#5b6b62;}
+
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.show{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="rail"></div>
+
+<nav>
+  <div class="inner">
+    <div class="logo">SHIBHI&nbsp;S // ECE</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#patent">Patent</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="eyebrow"><span class="dot"></span>B.E. Electronics &amp; Communication Engineering</div>
+  <h1 class="name">Shibhi S —<br>building at the <span>edge of hardware &amp; software.</span></h1>
+  <p class="role">I design embedded systems and IoT prototypes, then wire them up to the web — from sensor circuits and microcontroller firmware to full-stack MERN applications.</p>
+  <div class="contact-row">
+    <a class="pill" href="mailto:shibhisivasankar1602@gmail.com">shibhisivasankar1602@gmail.com</a>
+    <a class="pill" href="tel:+916374269599">+91 63742 69599</a>
+    <a class="pill" href="https://in.linkedin.com/in/shibhi-sivasankar-9b38b9379" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </div>
+</header>
+
+<section id="about" class="wrap reveal">
+  <span class="tag">01 / About</span>
+  <h2 class="title">From circuit boards to codebases</h2>
+  <div class="about-grid">
+    <div>
+      <p>I'm an Electronics and Communication Engineering student who likes building things that sense, move, and respond — flame detectors, GPS-guided robots, motor control systems — and then extending that same problem-solving into the web, through the MERN stack.</p>
+      <p>My patent-credited emergency robot project taught me how to take an idea from breadboard to working prototype. My internship at EMGLITZ Technologies sharpened that into real embedded firmware work. Now I'm looking to apply both sides — hardware and software — to real engineering problems.</p>
+    </div>
+    <div>
+      <div class="stat-card"><div class="num">1</div><div class="label">Patent — Fire Safeguard Emergency Robot</div></div>
+      <div class="stat-card"><div class="num">20%</div><div class="label">Faster sensor calibration, internship optimization</div></div>
+      <div class="stat-card"><div class="num">6-member</div><div class="label">Team, hyperlocal marketplace MVP</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="education" class="wrap reveal">
+  <span class="tag">02 / Education &amp; Certifications</span>
+  <h2 class="title">Background</h2>
+  <table>
+    <thead>
+      <tr><th>Degree</th><th>Institution</th><th>Score</th><th>Year</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>B.E. Electronics &amp; Communication Engineering</td><td>V.S.B. College of Engineering Technical Campus</td><td>7.55 CGPA</td><td>2023–2027</td></tr>
+      <tr><td>HSLC</td><td>A.R.R Matriculation Higher Secondary School</td><td>70.33%</td><td>2023</td></tr>
+    </tbody>
+  </table>
+  <div class="chips" style="margin-top:26px;">
+    <span class="chip">Electronic Systems Design — Hands-on Circuit &amp; PCB Design, NPTEL</span>
+    <span class="chip">MERN Stack Development</span>
+  </div>
+</section>
+
+<section id="skills" class="wrap reveal">
+  <span class="tag">03 / Skills</span>
+  <h2 class="title">Toolkit</h2>
+  <div class="chip-groups">
+    <div>
+      <div class="chip-group-label">Embedded Systems</div>
+      <div class="chips">
+        <span class="chip">Embedded C</span><span class="chip">Arduino</span><span class="chip">ESP32</span>
+        <span class="chip">Sensor Interfacing</span><span class="chip">Motor Control</span>
+        <span class="chip">GPS Modules</span><span class="chip">Ultrasonic Sensors</span>
+        <span class="chip">IoT Automation</span><span class="chip">Wireless Comm. Modules</span>
+      </div>
+    </div>
+    <div>
+      <div class="chip-group-label">Circuit &amp; Hardware</div>
+      <div class="chips">
+        <span class="chip">Circuit Design</span><span class="chip">PCB Design</span>
+        <span class="chip">Troubleshooting</span><span class="chip">Real-Time Systems</span>
+      </div>
+    </div>
+    <div>
+      <div class="chip-group-label">Programming &amp; Web</div>
+      <div class="chips">
+        <span class="chip">Java</span><span class="chip">C</span><span class="chip">HTML5</span>
+        <span class="chip">CSS</span><span class="chip">JavaScript</span>
+      </div>
+    </div>
+    <div>
+      <div class="chip-group-label">MERN Stack Development</div>
+      <div class="chips">
+        <span class="chip">MongoDB</span><span class="chip">Express.js</span><span class="chip">React</span><span class="chip">Node.js</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="work" class="wrap reveal">
+  <span class="tag">04 / Experience</span>
+  <h2 class="title">Internship</h2>
+  <div class="card">
+    <div class="card-head">
+      <h3>Intern <span class="badge">Embedded Systems</span></h3>
+      <span class="meta">EMGLITZ Technologies</span>
+    </div>
+    <ul>
+      <li>Reduced sensor calibration time by 20% by optimizing embedded C code.</li>
+      <li>Gained hands-on exposure to microcontroller programming and embedded C for real-time systems.</li>
+      <li>Worked on sensor interfacing, motor control, and GPS modules for IoT-based automation projects using Arduino and ESP32.</li>
+      <li>Performed circuit design and troubleshooting to support functional embedded hardware prototypes.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="patent" class="wrap reveal">
+  <span class="tag">05 / Patented Project</span>
+  <h2 class="title">Fire Safeguard Emergency Robot with GPS</h2>
+  <div class="card">
+    <div class="card-head">
+      <h3>Fire Safeguard Emergency Robot with GPS</h3>
+      <span class="meta">Team Project</span>
+    </div>
+    <ul>
+      <li>Designed an intelligent fire-detection and suppression robot using flame sensors, a water-pump mechanism, and ultrasonic-sensor-based obstacle avoidance.</li>
+      <li>Integrated GPS technology for real-time location tracking to speed up emergency response.</li>
+      <li>Awarded a patent for the design.</li>
+    </ul>
+    <div class="stack-row">
+      <span>Arduino</span><span>Embedded C</span><span>Motor Drivers</span><span>Wireless Comm. Modules</span><span>GPS</span>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="wrap reveal">
+  <span class="tag">06 / Projects</span>
+  <h2 class="title">Selected work</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <h3>Multi-Category Marketplace App</h3>
+      <span class="meta">Team Project — 6 members</span>
+    </div>
+    <ul>
+      <li>Built a hyperlocal marketplace connecting customers with local shops, services, rentals, jobs, and entertainment providers.</li>
+      <li>Developed consumer and seller workflows: listing management, search &amp; category filtering, authentication, and admin moderation.</li>
+      <li>Shipped a fully functional MVP with responsive UI and backend integration within a rapid development cycle.</li>
+    </ul>
+    <div class="stack-row">
+      <span>Next.js</span><span>Tailwind CSS</span><span>Supabase</span><span>Vercel</span>
+    </div>
+  </div>
+</section>
+
+<footer id="contact" class="wrap">
+  <span class="tag" style="justify-content:center; display:block;">07 / Contact</span>
+  <h2>Let's build something.</h2>
+  <p>Open to core engineering, embedded systems, IoT, and web development roles.</p>
+  <div class="footer-links">
+    <a class="btn primary" href="mailto:shibhisivasankar1602@gmail.com">Email me</a>
+    <a class="btn ghost" href="https://in.linkedin.com/in/shibhi-sivasankar-9b38b9379" target="_blank" rel="noopener">Connect on LinkedIn</a>
+  </div>
+  <div class="fine">SHIBHI S · +91 63742 69599 · shibhisivasankar1602@gmail.com</div>
+</footer>
+
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('show'); } });
+  }, {threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
